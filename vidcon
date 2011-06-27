@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+#-*-coding:utf-8-*-
+
+
+from Tkinter import *
+from tkFileDialog import askopenfilename
+from tkMessageBox import *
+import os
+
+class vidcon:
+    def __init__(self):
+        self.window = Tk()
+	self.window.title("Vidcon Vidyo Dönüştürücü")
+	self.window.geometry("480x260+200+100")
+	self.window.resizable(width = FALSE, height = FALSE)
+	self.window.tk_setPalette("grey")
+
+        self.input = Entry()
+        self.input.place(relx=0.05, rely=0.1, relheight=0.15, relwidth=0.3)
+
+        self.output = Entry()
+        self.output.place(relx=0.45, rely=0.1, relheight=0.15, relwidth=0.3)
+
+        self.input_label = Label(text = "Giriş:", font = "Verdana 8 bold", fg = "white")
+        self.input_label.place(relx=0.05, rely=0.03, relheight=0.05)
+
+        self.output_label = Label(text = "Çıkış:", font = "Verdana 8 bold", fg = "white")
+        self.output_label.place(relx=0.45, rely=0.03, relheight=0.05)
+
+        self.type = Label(text = "Tür:", font = "Verdana 8 bold", fg = "white")
+        self.type.place(relx=0.77, rely=0.03, relheight=0.05)
+
+        self.fc_b = Button(text = "Dosya Seç..",command = self.file_choose)
+        self.fc_b.place(relx=0.15, rely=0.25, relheight=0.075)
+
+        self.process_b = Button(text = "Dönüştür...", command = self.process)
+        self.process_b.place(relx=0.55, rely=0.25, relheight=0.075)
+
+        self.ext_list = Listbox(self.window)
+        self.scroll = Scrollbar(self.window)
+
+        self.scroll.config(command = self.ext_list.yview)
+        self.ext_list.config(yscrollcommand = self.scroll.set)
+
+        self.ext = ["mp3", "flv", "avi", "ogg","mp4"]
+        for item in self.ext:
+            self.ext_list.insert(END, item)
+
+        self.ext_list.place(relx=0.77, rely=0.1, relheight=0.4, relwidth=0.1)
+        self.scroll.place(relx=0.87, rely=0.1, relheight=0.4, relwidth=0.03)
+
+    def file_choose(self):
+        self.input.delete(0, END)
+        self.file_name = askopenfilename(initialdir = "~/")
+        self.input.insert(END, self.file_name)
+
+        self.output.delete(0, END)
+        self.output.insert(END, self.file_name.split(".")[0])
+
+    def process(self):
+        self.ext_name_number = int(self.ext_list.curselection()[0])
+        self.ext_name = self.ext[self.ext_name_number]
+        command = "ffmpeg -i %s %s" %(self.input.get(), self.output.get() + "." + self.ext_name)
+        os.system(command.encode('UTF-8'))
+
+    def run(self):
+        self.window.mainloop()
+
+app = vidcon()
+app.run()
