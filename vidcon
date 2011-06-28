@@ -58,10 +58,20 @@ class vidcon:
         self.output.insert(END, self.file_name.split(".")[0])
 
     def process(self):
-        self.ext_name_number = int(self.ext_list.curselection()[0])
-        self.ext_name = self.ext[self.ext_name_number]
-        command = "ffmpeg -i %s %s" %(self.input.get(), self.output.get() + "." + self.ext_name)
-        os.system(command.encode('UTF-8'))
+        try:
+            self.ext_name_number = int(self.ext_list.curselection()[0])
+            self.ext_name = self.ext[self.ext_name_number]
+        except:
+            return showwarning('Uyarı...', 'Tür Kısmını Boş Bırakmayın!!!')
+
+        if self.input.get() == '' or self.output.get() == '':
+            return showwarning('Uyarı', 'Giriş veya Çıkış Kısımları Boş Bırakılamaz...')
+        try:
+            command = "ffmpeg -i %s %s" %(self.input.get(), self.output.get() + "." + self.ext_name)
+            os.system(command.encode('UTF-8'))
+            return  showinfo('Sonuç', 'İşlem Tamamlandı...')
+        except:
+            return showerror('Hata!', 'Hata Oluştu!')
 
     def run(self):
         self.window.mainloop()
